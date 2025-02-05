@@ -9,7 +9,7 @@ const Box = forwardRef((props,ref,)=>{
         getBoxValue: ()=> {return value}, 
     }));
 
-    useEffect(()=>{props.checkWinner()},[value])
+    useEffect(()=>{if(value){props.checkWinner()}},[value])
 
     return (
         <div onClick={()=>{props.handleClick(ref)}} className={`gameboard-box ${classname}`}>{value}</div>

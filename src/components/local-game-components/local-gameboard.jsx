@@ -13,11 +13,10 @@ export default function LocalGameboard(
     const [running, setRunning] = useState(true);
     const [roundWon, setRoundWon] = useState(false);
     const [draw, setDraw] = useState(false); 
-    const [playerTurn, setPlayerTurn] = useState(()=>(tossWinner === player1.pName)? player1 :player2);
+    const [playerTurn, setPlayerTurn] = useState(()=>(tossWinner == player1.pName)? player1 :player2);
     const [player1Score, setPlayer1Score] = useState(0);
     const [player2Score, setPlayer2Score] = useState(0);
     const boxRefs = useRef([useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null), useRef(null)]);
-
     function handleClick(ref){
         if(ref.current && running ){
             if(ref.current.getBoxValue() === ''){
