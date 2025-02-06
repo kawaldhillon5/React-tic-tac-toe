@@ -5,18 +5,21 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import './index.css'
-import Root from "./routes/root";
-import Home from "./routes/home";
+import Root, {loader as rootLoader, action as rootAction} from "./routes/root";
 import ErrorPage from "./erro-page";
 import About from "./routes/about";
 import Game from "./routes/game";
 import GameLocal from "./routes/game-routes/local";
 import GameOnline from "./routes/game-routes/online";
+import LogIn, {action as logInAction} from "./routes/auth-routes/logIn";
+import SignUp, {action as signUpAction} from "./routes/auth-routes/signUp";
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: < Root />,
+    loader: rootLoader,
+    action: rootAction,
     errorElement: <ErrorPage />,
     children: [
       {
@@ -27,10 +30,17 @@ const router = createBrowserRouter([
         path: '/about',
         element: <About />
       },
-      // {
-      //   path : '/game',
-      //   element: <Game />,
-      // },
+      {
+        path: '/authenticate/logIn',
+        element: <LogIn />,
+        action: logInAction,
+      },
+      {
+        path: '/authenticate/signUp',
+        element: <SignUp />,
+        action: signUpAction,
+      },
+
       {
         path: '/game/local',
         element: <GameLocal />,
