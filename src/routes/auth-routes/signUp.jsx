@@ -1,7 +1,7 @@
-import { Form, Link, redirect, useActionData, useNavigate, useNavigation, useSubmit } from "react-router-dom";
+import { Form, Link, redirect, useActionData, useNavigate, useNavigation, useOutletContext, useSubmit } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faLock, faSpinner } from '@fortawesome/free-solid-svg-icons'; // Import more icons
-import {  useState } from "react";
+import {  useEffect, useState } from "react";
 import { postSignUpData } from "../../scripts/api";
 import { FaCheck, FaEye, FaEyeSlash } from "react-icons/fa";
 
@@ -41,7 +41,7 @@ export default function SignUp(){
     const navigation = useNavigation();
     const isSubmitting = navigation.state === "submitting";
     const navigate = useNavigate();
-
+    const user = useOutletContext();
     const {error, data} = useActionData()? useActionData() : {error: '', data: ''};
 
     const validatePassword = (password) => {
@@ -87,6 +87,14 @@ export default function SignUp(){
         }
     }
     signUpSucess();
+
+        useEffect(()=>{
+      if(user.userId){
+        navigate('/')
+      }
+    },[user])
+
+
     return (
         <div className="login-page"> 
         <div className="login-container"> 

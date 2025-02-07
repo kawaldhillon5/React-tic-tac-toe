@@ -13,6 +13,7 @@ import GameLocal from "./routes/game-routes/local";
 import GameOnline from "./routes/game-routes/online";
 import LogIn, {action as logInAction} from "./routes/auth-routes/logIn";
 import SignUp, {action as signUpAction} from "./routes/auth-routes/signUp";
+import AuthChecker from "./routes/auth-routes/authChecker";
 
 const router = createBrowserRouter([
   {
@@ -46,9 +47,14 @@ const router = createBrowserRouter([
         element: <GameLocal />,
       },
       {
-        path: 'game/online',
-        element: <GameOnline />,
-      }
+        element: <AuthChecker />,
+        children: [
+          {
+            path: 'game/online',
+            element: <GameOnline />,
+          }
+        ]
+      },
     ]
   }
 ]);

@@ -1,9 +1,9 @@
-import { Form, Link, redirect, useActionData, useLoaderData, useLocation, useNavigate, useNavigation } from "react-router-dom";
+import { Form, Link, redirect, useActionData, useLoaderData, useLocation, useNavigate, useNavigation, useOutletContext } from "react-router-dom";
 
 import './auth.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faLock, faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { logIn } from "../../scripts/api";
 import { FaCheck, FaEye, FaEyeSlash } from "react-icons/fa";
 import { GiLabCoat } from "react-icons/gi";
@@ -31,6 +31,7 @@ export async function action({request, params}) {
 
 export default function LogIn(){
     const {error, data} = useActionData()? useActionData(): {error: '', data: ''};
+    const user = useOutletContext();
     const location = useLocation();
     const [isFocused, setIsFocused] = useState({ username: false, password: false });
     const [showPassword, setShowPassword] = useState(false);
@@ -38,6 +39,7 @@ export default function LogIn(){
     const isSubmitting = navigation.state === "submitting";
     const navigate = useNavigate();
     const previousLocation = useRef(location.state?.from || '/');
+
     const logInSucess = function(){
       if(data){
           setTimeout(()=>{
@@ -46,6 +48,13 @@ export default function LogIn(){
       }
     }
     logInSucess();
+
+    useEffect(()=>{
+      if(user.userId){
+        navigate('/')
+      }
+    },[user])
+
     return (
         <div className="login-page">
         <div className="login-container">

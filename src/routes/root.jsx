@@ -50,6 +50,8 @@ export default function Root() {
     const location = useLocation();
     const isSubmitting = navigation.state === "submitting";
     const {errorAction, data} = useActionData()? useActionData() : {errorAction: '', data: ''};
+
+    
     function handleClickOutside(event) {
         if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
           setShowDialog(false);
@@ -121,7 +123,7 @@ export default function Root() {
         </div>
   
         <div id="root-content">
-          <Outlet />
+          <Outlet context={user}/>
         </div>
   
         <div id="root-footer">
