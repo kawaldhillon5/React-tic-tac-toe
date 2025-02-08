@@ -31,7 +31,7 @@ export async function action({request, params}) {
 } 
 
 export async function loader() {
-    let error, user = null;
+    let error, user = {userId: null};
     try{
         const resp = await api.get('/authenticate/user');
         user = resp.data
@@ -104,7 +104,7 @@ export default function Root() {
   
               {showDialog && (
                 <div className="dropdown" >
-                  {user ? (
+                  {user.userId ? (
                     <>
                         <p>Welcome, {user.userName}!</p>
                         <Form method="post">
