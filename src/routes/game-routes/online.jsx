@@ -11,29 +11,47 @@ export default function GameOnline(){
     const [socketStatus, setSocketStatus] = useState(null); 
     const [error, setError] = useState(null);
 
-    console.log(opponent);
     function handleStart(){
         if(!sockt){
             setSocketStatus('Starting');
             const socket = new WebSocket(`ws://localhost:8080/${user.userId}`);
             setSocket(socket);
+            setGameState(1)
             socket.addEventListener('open', () => {
                 setSocketStatus("Finding a match");
-                socket.send(JSON.stringify({type: 'find-match'}));
+                socket.send(JSON.stringify({}));
             });
             socket.addEventListener('message', (event) => {
                 const msg = JSON.parse(event.data.toString());
+                console.log('msgObje: ', msg);
                 if(msg){
-                    if(msg.type === 'opponent'){
-                        setOpponent(msg.data);
-                        setSocketStatus('match-found');
-                        setGameState(2);
-                    } else if(msg.type === 'text') {
+                    switch (msg.type) {
+                        case 'oponent':
+                            setOpponent(msg.data);
+                            setSocketStatus('match-found');
+                            setGameState(2);
+                            break;
+                        case 'timeout':
+                            socket.close();
+                            setSocket(null);
+                            setSocketStatus("No match found");
+                            setGameState(1);
+                            break;
+                        case 'error':
+                            setError(msg.message)
+                            break;
+                        default:
+                            break;
+                    }
+                        
+                    if(msg.type === 'text') {
                         console.log('text: ',msg.data);
                     }
                 }
             });
-            
+            socket.addEventListener("close", ()=>{
+                console.log("Server disconnected");
+            });
         }
     }
 
@@ -42,6 +60,7 @@ export default function GameOnline(){
             sockt.close();
             setSocket(null);
             setSocketStatus("No match found");
+            setGameState(null)
             setTimeout(()=>{setSocketStatus(null)},1000)
         } 
     }
@@ -66,12 +85,22 @@ export default function GameOnline(){
         if(sockt){
             const timeoutId = setTimeout(()=>{
                 findMatchTimeOut()
-            },6000)
+            },10000)
             return () => clearTimeout(timeoutId);
         }
     },[sockt])
 
-    if(!gameState){
+    if(error){
+        return (
+            <>
+                <p>error</p>
+                <br />
+                <p>{error}</p>
+            </>
+        )
+    }
+
+    if(!gameState || gameState === 1){
         return (
             <div className="online-game-main">
             <button onClick={handleStart} >{socketStatus ? socketStatus : "Start"}</button>
