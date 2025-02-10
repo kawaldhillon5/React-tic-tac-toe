@@ -124,6 +124,7 @@ export default function SignUp(){
                     name="password1"
                     id="password1"
                     placeholder="Password"
+                    className="password-toggle"
                     required
                     onChange={handlePasswordChange}
                     onFocus={() => setIsFocused({ ...isFocused, password: true })}
@@ -145,6 +146,7 @@ export default function SignUp(){
                     type={showPassword ? "text" : "password"}
                     name="password2"
                     id="password2"
+                    className="password-toggle"
                     placeholder="Confirm Password"
                     required
                     onChange={checkPasswordFields}

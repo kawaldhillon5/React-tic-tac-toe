@@ -84,6 +84,7 @@ export default function LogIn(){
                   type={showPassword ? "text" : "password"}
                   name="password"
                   id="password"
+                  className="password-toggle"
                   placeholder="Password"
                   required
                   onFocus={() => setIsFocused({ ...isFocused, password: true })}

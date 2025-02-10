@@ -8,34 +8,53 @@ export default function GameOnline(){
     const opponentRef = useRef(opponent);
     const [sockt,setSocket] = useState(null);
     const [gameState, setGameState] =useState(null);
-    const [socketStatus, setSocketStatus] = useState(null); 
+    const [gameStateStatus, setGameStateStatus] = useState(null); 
     const [error, setError] = useState(null);
 
     function handleStart(){
         if(!sockt){
-            setSocketStatus('Starting');
+            setGameStateStatus('Starting');
             const socket = new WebSocket(`ws://localhost:8080/${user.userId}`);
             setSocket(socket);
             setGameState(1)
             socket.addEventListener('open', () => {
-                setSocketStatus("Finding a match");
-                socket.send(JSON.stringify({}));
+                setGameStateStatus("Finding a match");
+                socket.send(JSON.stringify({type:'find-match'}));
             });
             socket.addEventListener('message', (event) => {
                 const msg = JSON.parse(event.data.toString());
-                console.log('msgObje: ', msg);
+                console.log('msgObj: ', msg);
                 if(msg){
                     switch (msg.type) {
-                        case 'oponent':
+                        case 'opponent':
                             setOpponent(msg.data);
-                            setSocketStatus('match-found');
-                            setGameState(2);
+                            setGameStateStatus('match-found');
+                            setTimeout(()=>{
+                                setGameState(2);
+                                setGameStateStatus('Sending a Toss Request');
+                                socket.send(JSON.stringify({type:'toss-request'}));
+                                setTimeout(()=>{
+                                    setGameStateStatus("Tossing !")
+                                },1000)            
+                            },1000)
                             break;
                         case 'timeout':
                             socket.close();
                             setSocket(null);
-                            setSocketStatus("No match found");
+                            setGameStateStatus("No match found");
                             setGameState(1);
+                            setTimeout(()=>{
+                                setGameStateStatus(null);            
+                            },1000)
+                            break;
+                        case 'toss-results':
+                            setTimeout(()=>{
+                                console.log(opponentRef); 
+                                user.mark = msg.data.userMark
+                                setOpponent({...opponentRef.current, mark:msg.data.opponentMark});
+                                setGameStateStatus(msg.data.userMark === "X" ? "You Won Toss" : `${opponentRef.current.userName} won Toss`);
+                                setGameState(3);
+                            },2000)
                             break;
                         case 'error':
                             setError(msg.message)
@@ -59,9 +78,11 @@ export default function GameOnline(){
         if(!opponentRef.current){
             sockt.close();
             setSocket(null);
-            setSocketStatus("No match found");
+            setGameStateStatus("No match found");
             setGameState(null)
-            setTimeout(()=>{setSocketStatus(null)},1000)
+            setTimeout(()=>{
+                setGameStateStatus(null);            
+            },1000)
         } 
     }
 
@@ -82,13 +103,23 @@ export default function GameOnline(){
     },[sockt]);
 
     useEffect(()=>{
-        if(sockt){
+        if(sockt && opponent){
             const timeoutId = setTimeout(()=>{
                 findMatchTimeOut()
             },10000)
             return () => clearTimeout(timeoutId);
         }
-    },[sockt])
+    },[sockt, opponent]);
+
+    useEffect(()=>{
+        if(gameState === 2 && !opponent.mark){
+            const timeoutId = setTimeout(()=>{
+                console.log("Toss TimeOut");
+                setError("Toss Time Out");
+            },5000)
+            return () => clearTimeout(timeoutId);
+        }
+    },[gameState, opponent])
 
     if(error){
         return (
@@ -102,8 +133,26 @@ export default function GameOnline(){
 
     if(!gameState || gameState === 1){
         return (
-            <div className="online-game-main">
-            <button onClick={handleStart} >{socketStatus ? socketStatus : "Start"}</button>
+            <div className="online-game-mactchmaking-stage">
+            <button onClick={handleStart} >{gameStateStatus ? gameStateStatus : "Start"}</button>
+            </div>
+        )
+    }
+
+    if(gameState === 2 && opponent){
+        return (
+            <div className="online-game-tossing-stage">
+                <p>{user.userName} Vs {opponent.userName}</p>
+                <p>{gameStateStatus}</p>
+            </div>
+        )
+    }
+
+    if(gameState === 3){
+        return (
+            <div className="online-game-toss-complete">
+                <p>{`${user.userName}(${user.mark})`}  Vs {`${opponent.userName}(${opponent.mark})`}</p>
+                <p>{gameStateStatus}</p>
             </div>
         )
     }
