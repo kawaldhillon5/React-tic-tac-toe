@@ -40,20 +40,15 @@ export default function LogIn(){
     const navigate = useNavigate();
     const previousLocation = useRef(location.state?.from || '/');
 
-    const logInSucess = function(){
-      if(data){
-          setTimeout(()=>{
-              navigate((previousLocation.current === '/authenticate/logIn') ? '/': previousLocation.current);
-          },1000)
-      }
-    }
-    logInSucess();
-
     useEffect(()=>{
-      if(user.userId){
-        navigate('/')
+      if(data){
+        setTimeout(()=>{
+            navigate((previousLocation.current === '/authenticate/logIn') ? '/': previousLocation.current);
+        },1000)
+      } else if(user.userId){
+        navigate((previousLocation.current === '/authenticate/logIn') ? '/': previousLocation.current);
       }
-    },[user])
+    },[user,data])
 
     return (
         <div className="login-page">

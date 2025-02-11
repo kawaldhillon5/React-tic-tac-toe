@@ -79,20 +79,15 @@ export default function SignUp(){
         setPasswordError(error);
     }
     
-    const signUpSucess = function(){
+    useEffect(()=>{
         if(data){
-            setTimeout(()=>{
-                navigate('../authenticate/logIn');
-            },1000)
+          setTimeout(()=>{
+              navigate('./authenticate/logIn');
+          },1000)
+        } else if(user.userId){
+          navigate((previousLocation.current === '/authenticate/logIn') ? '/': previousLocation.current);
         }
-    }
-    signUpSucess();
-
-        useEffect(()=>{
-      if(user.userId){
-        navigate('/')
-      }
-    },[user])
+      },[user,data])
 
 
     return (

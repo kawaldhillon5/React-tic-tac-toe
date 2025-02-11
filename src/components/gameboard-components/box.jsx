@@ -1,12 +1,14 @@
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 
-const Box = forwardRef((props,ref,)=>{
+const Box = forwardRef((props,ref)=>{
     const [value, setValue] = useState('');
     const [classname, setClassname] = useState('');
+
     useImperativeHandle(ref, ()=>({
         setBoxValue : (val) => setValue(val),
         setBoxClass: (val)=> setClassname(val),
         getBoxValue: ()=> {return value}, 
+
     }));
 
     useEffect(()=>{if(value){props.checkWinner()}},[value])

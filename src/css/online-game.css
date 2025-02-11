@@ -1,0 +1,10 @@
+.online-game-running{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.gameboard-box.draw{
+    background-color: #6399fc;
+  }
