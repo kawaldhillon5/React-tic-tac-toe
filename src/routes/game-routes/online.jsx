@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import {  data, useOutletContext } from "react-router-dom"
+import {  data, Navigate, useNavigate, useOutletContext } from "react-router-dom"
 import '../../css/online-game.css';
 import OnlineBox from "../../components/gameboard-components/onlineBox";
 
@@ -16,6 +16,8 @@ export default function GameOnline(){
     const round = useRef(null);
     const matchId = useRef(null);
     const boxRefs = useRef([useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null), useRef(null)]);
+    const navigate = useNavigate();
+
 
     function handleStart(){
         if(!sockt){
@@ -107,6 +109,10 @@ export default function GameOnline(){
                             setGameStateStatus(`${currentPlayerTurn.current.userName}'s Turn`);
                             round.current = msg.data.round;
                             matchId.current = msg.data.matchId;
+                            boxRefs.current.forEach(ref => {
+                                ref.current = null;
+                            });
+                            setGameState(4)
                             break;
                         default:
                             break;
@@ -154,6 +160,16 @@ export default function GameOnline(){
             }
         }
     }
+
+    function handleRestart(){
+        sockt.send(JSON.stringify({type:"begin-match"}));
+    }
+
+    function handleQuit(){
+        sockt.send(JSON.stringify({type:"quit-match"}));
+        navigate('/')
+    }
+
 
     useEffect(() => {
         opponentRef.current = opponent; 
@@ -247,7 +263,8 @@ export default function GameOnline(){
                         <p>{opponent.score}</p>
                     </div>
                 </div>
-                <button>Restart</button>
+                <button onClick={handleRestart}>Restart</button>
+                <button onClick={handleQuit}>Quit</button>
             </div>
         )
     }
