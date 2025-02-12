@@ -188,7 +188,7 @@ export default function GameOnline(){
     },[sockt]);
 
     useEffect(()=>{
-        if(sockt && opponent){
+        if(sockt && !opponent){
             const timeoutId = setTimeout(()=>{
                 findMatchTimeOut()
             },10000)
@@ -219,7 +219,7 @@ export default function GameOnline(){
 
     if(!gameState || gameState === 1){
         return (
-            <div className="online-game-mactchmaking-stage">
+            <div className="online-game-matchmaking-stage">
             <button onClick={handleStart} >{gameStateStatus ? gameStateStatus : "Start"}</button>
             </div>
         )
@@ -262,12 +262,12 @@ export default function GameOnline(){
                 <p>{gameStateStatus}</p>
                 <div className="scores-div-main">
                     <div className="player-score">
-                        <p>{user.userName}</p>
-                        <p>{user.score}</p>
+                        <p className="player-score-name">{user.userName}</p>
+                        <p className="player-score-score">{user.score}</p>
                     </div>
                     <div className="player-score">
-                        <p>{opponent.userName}</p>
-                        <p>{opponent.score}</p>
+                        <p className="player-score-name">{opponent.userName}</p>
+                        <p className="player-score-score">{opponent.score}</p>
                     </div>
                 </div>
                 <button onClick={handleRestart}>Restart</button>
