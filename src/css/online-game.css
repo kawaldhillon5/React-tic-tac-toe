@@ -13,7 +13,8 @@
 .online-game-tossing-stage,
 .online-game-toss-complete,
 .online-game-running,
-.online-game-results{
+.online-game-results,
+.online-game-error-div{
     max-width: 450px;
     display: flex;
     flex-direction: column;
@@ -43,4 +44,9 @@
 
 .player-score-name{
     font-weight: 600;
+}
+
+.online-game-error-div>.error-div-header{
+    font-size: 120%;
+    color: rgb(151, 151, 151);
 }

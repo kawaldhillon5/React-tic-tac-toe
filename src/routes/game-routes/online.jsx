@@ -209,11 +209,10 @@ export default function GameOnline(){
 
     if(error){
         return (
-            <>
-                <p>error</p>
-                <br />
-                <p>{error}</p>
-            </>
+            <div className="online-game-error-div">
+                <p className="error-div-header">Error</p>
+                <p className="error-div-content">{error}</p>
+            </div>
         )
     }
 
@@ -276,9 +275,4 @@ export default function GameOnline(){
         )
     }
 
-    return (
-        <>
-            <p>Online</p>
-        </>
-    )
 }

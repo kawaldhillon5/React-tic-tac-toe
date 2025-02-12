@@ -80,12 +80,14 @@ export default function SignUp(){
     }
     
     useEffect(()=>{
+        let timeout
         if(data){
-          setTimeout(()=>{
+          timeout = setTimeout(()=>{
               navigate('./authenticate/logIn');
           },1000)
         } else if(user.userId){
-          navigate((previousLocation.current === '/authenticate/logIn') ? '/': previousLocation.current);
+            clearTimeout(timeout);
+          navigate((previousLocation.current === './authenticate/logIn') ? '/': previousLocation.current);
         }
       },[user,data])
 
