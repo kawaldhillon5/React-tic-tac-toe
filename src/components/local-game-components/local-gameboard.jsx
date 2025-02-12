@@ -17,6 +17,7 @@ export default function LocalGameboard(
     const [player1Score, setPlayer1Score] = useState(0);
     const [player2Score, setPlayer2Score] = useState(0);
     const boxRefs = useRef([useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null), useRef(null)]);
+    
     function handleClick(ref){
         if(ref.current && running ){
             if(ref.current.getBoxValue() === ''){
