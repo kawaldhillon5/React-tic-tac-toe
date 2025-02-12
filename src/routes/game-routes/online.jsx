@@ -17,7 +17,7 @@ export default function GameOnline(){
     const matchId = useRef(null);
     const boxRefs = useRef([useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null),useRef(null), useRef(null)]);
     const navigate = useNavigate();
-
+    const [moveTimeout, setMoveTimeOut] = useState(false);
 
     function handleStart(){
         if(!sockt){
@@ -74,19 +74,24 @@ export default function GameOnline(){
                             boxRefs.current[Number(msg.data.position.slice(3))].current.setBoxValue(msg.data.mark);
                             break;
                         case 'match-won':
-                            msg.data.positionArray.forEach((position)=>{
-                                boxRefs.current[Number(position.slice(3))].current.setBoxClass('won');
-                            });
+                            if(msg.data.info){
+                                setMoveTimeOut(true);
+                            }
+                            if(msg.data.positionArray.length){    
+                                    msg.data.positionArray.forEach((position)=>{
+                                    boxRefs.current[Number(position.slice(3))].current.setBoxClass('won');
+                                });
+                            }
                             setTimeout(()=>{
                                 setGameState(5);
                                 if(msg.data.winner === true){
                                     user.score = msg.data.winnerScore;
                                     setOpponent({...opponentRef.current,score:msg.data.opponentScore});
-                                    setGameStateStatus(`${user.userName} Won`);
+                                    setGameStateStatus(`${user.userName} Won ${msg.data.info ? "Due to "+msg.data.info : ''}`);
                                 } else {
                                     user.score = msg.data.opponentScore;
                                     setOpponent({...opponentRef.current,score:msg.data.winnerScore});
-                                    setGameStateStatus(`${opponentRef.current.userName} Won`);
+                                    setGameStateStatus(`${opponentRef.current.userName} Won ${msg.data.info ? "Due to "+msg.data.info : ''}`);
                                 }
                             },2000)
                             break;
@@ -148,7 +153,7 @@ export default function GameOnline(){
     }
 
     function handleClick(ref){
-        if(ref.current && (user.userName === currentPlayerTurn.current.userName) ){
+        if(ref.current && (user.userName === currentPlayerTurn.current.userName) && !moveTimeout ){
             if(ref.current.getBoxValue() === ''){
                 ref.current.setBoxValue(user.mark);
                 sockt.send(JSON.stringify({type:'move', data:{mark: user.mark, position: ref.current.getBoxId()}}));
@@ -163,6 +168,7 @@ export default function GameOnline(){
 
     function handleRestart(){
         sockt.send(JSON.stringify({type:"begin-match"}));
+        setGameStateStatus(`Waiting for ${opponent.userName} to Restart`);
     }
 
     function handleQuit(){
@@ -191,6 +197,7 @@ export default function GameOnline(){
     },[sockt, opponent]);
 
     useEffect(()=>{
+        setMoveTimeOut(false);
         if(gameState === 2 && !opponent.mark){
             const timeoutId = setTimeout(()=>{
                 console.log("Toss TimeOut");
