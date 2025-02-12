@@ -43,10 +43,10 @@ export default function LogIn(){
     useEffect(()=>{
       if(data){
         setTimeout(()=>{
-            navigate((previousLocation.current === '/authenticate/logIn') ? '/': previousLocation.current);
+            navigate((previousLocation.current === './authenticate/logIn') ? '/': previousLocation.current);
         },1000)
       } else if(user.userId){
-        navigate((previousLocation.current === '/authenticate/logIn') ? '/': previousLocation.current);
+        navigate((previousLocation.current === './authenticate/logIn') ? '/': previousLocation.current);
       }
     },[user,data])
 
