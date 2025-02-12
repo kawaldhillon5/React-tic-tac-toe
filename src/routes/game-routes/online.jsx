@@ -22,7 +22,7 @@ export default function GameOnline(){
     function handleStart(){
         if(!sockt){
             setGameStateStatus('Starting');
-            const socket = new WebSocket(`ws://${import.meta.env.VITE_WS_API_URL}:5174/${user.userId}`);
+            const socket = new WebSocket(`wss://${import.meta.env.VITE_WS_API_URL}:5174/${user.userId}`);
             setSocket(socket);
             setGameState(1)
             socket.addEventListener('open', () => {
