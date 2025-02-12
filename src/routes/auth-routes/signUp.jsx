@@ -87,7 +87,7 @@ export default function SignUp(){
           },1000)
         } else if(user.userId){
             clearTimeout(timeout);
-          navigate((previousLocation.current === './authenticate/logIn') ? '/': previousLocation.current);
+          navigate((previousLocation.current === './authenticate/logIn') ? '/': `./${previousLocation.current}`);
         }
       },[user,data])
 
